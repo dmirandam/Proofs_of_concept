@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: demo
+data:
+  config.yaml: |
+    tunnel: istio-tunnel
+    credentials-file: /etc/cloudflared/istio-tunnel.json
+
+    ingress:
+      - hostname: example.dmirandam.com
+        service: http://<lb_ip>:80 # or k8s service name
