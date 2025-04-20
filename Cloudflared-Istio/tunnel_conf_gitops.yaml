@@ -9,5 +9,5 @@ data:
     credentials-file: /etc/cloudflared/istio-tunnel.json
 
     ingress:
-      - hostname: example.dmirandam.com
+      - hostname: dev.dmirandam.com
         service: http://<lb_ip>:80 # or k8s service name

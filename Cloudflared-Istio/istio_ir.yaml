@@ -10,7 +10,7 @@ spec:
     istio: ingress
   servers:
     - hosts:
-        - devs.dmirandam.com
+        - dev.dmirandam.com
       port:
         name: http
         number: 80
