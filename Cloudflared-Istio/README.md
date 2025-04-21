@@ -1,34 +1,32 @@
-# secure exposition of on-premise k8s aplications using cloudflare tunnels and istio
+# Securely Exposing On-Prem Kubernetes Services Without Public Ports – A Production-Grade PoC
 
+### This proof of concept presents a robust ingress architecture for exposing internal services running in an on-premise Kubernetes cluster, with **zero reliance on public IPs or open ports**, and full TLS enforcement.
 
-🔐 **How can you securely expose internal on-prem services without opening public ports?**
+## Architecture context:
+- Kubernetes distribution: **K3s** deployed across 3 VMs on **Proxmox**.
+- Services must be reachable externally via HTTPS.
+- The environment is fully **on-premise**, with **no public cloud dependencies**.
+- Strong preference for **GitOps-compatible**, declarative infrastructure.
 
-This proof of concept explores a secure and manageable architecture for ingress into private infrastructure:
+## Solution overview:
+1. **Cloudflare Tunnel** is used as the secure entry point. No ports are exposed to the public internet.
+2. A dedicated **`cloudflared` pod** within the cluster handles inbound tunnel traffic.
+3. **MetalLB** provides internal LoadBalancer IPs to expose cluster services.
+4. **Istio Ingress Gateway** receives traffic and delegates to VirtualServices.
+5. **Istio Gateway + VirtualService resources** manage routing based on host/path.
+6. TLS is fully enforced using **Cloudflare’s “Full (Strict)” mode** with internal certificates.
 
-🧱 **Technical context:**
-- K3s cluster running on 3 VMs managed by Proxmox (fully on-prem).
-- No public IPs or open ports.
-- Requirements: HTTPS access, secure ingress, path-based routing, and full control over certificates.
+## Tunnel management:
+- Configured via a `config.yml` inside the `cloudflared` pod – ideal for **GitOps workflows**.
+- Alternatively, tunnel behavior can be managed via the **Cloudflare Zero Trust Dashboard**.
 
-🧩 **Implemented solution:**
-1. **Cloudflare Tunnel** enables encrypted access without needing a public IP.
-2. A **`cloudflared` pod** inside the cluster receives traffic and forwards it to a local LoadBalancer IP.
-3. **MetalLB** assigns internal IPs for services of type LoadBalancer.
-4. **Istio Ingress Gateway** handles incoming traffic from the tunnel.
-5. **Istio Gateway + VirtualServices** manage routing by host/path.
-6. **TLS strict mode** enforced in Cloudflare; internal certs are managed via Istio.
+## Key results:
+- No public IPs or exposed ports.
+- Full TLS encryption from client to workload.
+- Fine-grained traffic control with Istio.
+- Entire setup defined as code, reproducible, and maintainable.
 
-⚙️ **Tunnel management:**
-- Fully GitOps-friendly: the tunnel can be configured via YAML inside the `cloudflared` pod.
-- Or optionally managed through the **Cloudflare Zero Trust dashboard**.
+### This setup demonstrates a **secure, declarative, and production-grade ingress model** for Kubernetes clusters in private infrastructure environments.
 
-🛰️ High-level architecture diagram 👇
-
-
-✅ **Result:**
-- Secure HTTPS ingress without exposing any infrastructure.
-- Fine-grained, declarative routing.
-- Complete control over TLS, traffic flow, and tunnel configuration.
-
-
-📌 This PoC shows it's possible to build a production-grade ingress layer for on-prem environments using open tools and zero public exposure.
+## Architecture diagram
+<img src="https://dmirandam-public-images.s3.us-east-1.amazonaws.com/secure_exposition_using_cloudflare_tunnels_and_istio.png" alt="Architecture Diagram" width="5000"/>
