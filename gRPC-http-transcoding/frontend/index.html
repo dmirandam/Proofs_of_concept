@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Demo Calc JSON→gRPC</title>
+</head>
+<body>
+  <h1>Suma gRPC vía JSON</h1>
+  <input id="a" type="number" placeholder="a" value="3" />
+  <input id="b" type="number" placeholder="b" value="5" />
+  <button onclick="add()">Sumar</button>
+  <pre id="out"></pre>
+
+<script>
+async function add() {
+  const a = Number(document.getElementById('a').value);
+  const b = Number(document.getElementById('b').value);
+  const res = await fetch('https://calc.example.com/api/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ a, b })
+  });
+  document.getElementById('out').textContent = await res.text();
+}
+</script>
+</body>
+</html>

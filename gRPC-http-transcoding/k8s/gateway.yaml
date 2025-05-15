@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: calc-gw
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http-json
+      protocol: HTTP         # El filtro convertirá HTTP→gRPC
+    hosts: ["calc.example.com"]

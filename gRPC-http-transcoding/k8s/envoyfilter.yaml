@@ -1,0 +1,31 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: calc-transcoder
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway      # Aplica solo al gateway
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: GATEWAY
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+            subFilter:
+              name: "envoy.filters.http.router"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.grpc_json_transcoder
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
+          proto_descriptor_bin: "${DESCRIPTOR}"
+          services: ["calc.Calculator"]
+          print_options:
+            add_whitespace: false
+            always_print_enums_as_ints: false
+            preserve_proto_field_names: false
+          match_incoming_request_route: true   # permite que la ruta /api/add sea la misma para gRPC y JSON

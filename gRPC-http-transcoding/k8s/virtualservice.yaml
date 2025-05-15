@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: calc-vs
+spec:
+  hosts: ["calc.example.com"]
+  gateways: ["calc-gw"]
+  http:
+  - match:
+      - uri:
+          prefix: "/api/"     # cualquier ruta declarada vía annotations
+    rewrite:
+      uri: "/api/"           # mantiene la ruta para el filtro
+    route:
+      - destination:
+          host: calc-svc
+          port:
+            number: 50051

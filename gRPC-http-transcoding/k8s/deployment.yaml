@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calc
+  template:
+    metadata:
+      labels:
+        app: calc
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      - name: server
+        image: ghcr.io/tu-org/calc:v1
+        ports:
+        - containerPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calc-svc
+spec:
+  selector:
+    app: calc
+  ports:
+  - name: grpc           #  ⚠️  Nombre debe empezar por “grpc” para que Istio detecte el protocolo :contentReference[oaicite:2]{index=2}
+    port: 50051
+    targetPort: 50051
